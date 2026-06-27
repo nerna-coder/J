@@ -1,30 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Загрузка...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Загрузка скрипта...</title>
+    <style>
+        body { background: #121212; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { text-align: center; padding: 20px; border-radius: 8px; background: #1a1a1a; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+    </style>
 </head>
 <body>
-    <div id="status">Проверка перехода...</div>
+    <div class="box">
+        <div id="status">Проверка безопасности соединения...</div>
+    </div>
 
     <script>
-        // Проверяем, откуда пришел посетитель
-        const kicker = document.referrer.toLowerCase();
+        // URL вашего Pastebin / Pastefy, куда должен попасть реальный человек
+        const PASTE_URL = "ВСТАВЬТЕ_СЮДА_ВАШУ_ССЫЛКУ_НА_PASTEBIN_ИЛИ_PASTEFY";
         
-        // ВСТАВЬТЕ СЮДА вашу реальную ссылку на файл/чит (для людей)
-        const REAL_FILE = "https://mediafire.com"; 
-        
-        // Текст, который гарантированно заберет и покажет байпас-бот
-        const BOT_TEXT = "kill yourself"; 
+        // Текст, который заберут и выведут в Discord боты-байпасеры
+        const BOT_TEXT = "kill yourself";
 
-        if (kicker.includes("linkvertise.com")) {
-            // Если человек честно прошел Linkvertise — мгновенно перенаправляем на файл
-            document.getElementById("status").innerText = "Доступ разрешен! Скачивание...";
-            window.location.href = REAL_FILE;
-        } else {
-            // Если это бот-байпасер (прямой запрос без перехода) — отдаем ему текст
-            document.getElementById("status").innerText = BOT_TEXT;
+        function checkAccess() {
+            const ref = document.referrer.toLowerCase();
+            
+            // Защита: байпасеры часто отправляют пустой реферер или симулируют его криво
+            // Проверяем, пришел ли пользователь строго с домена linkvertise
+            if (ref && (ref.includes("linkvertise.com") || ref.includes("linkvertise.net"))) {
+                document.getElementById("status").innerText = "Доступ разрешен. Перенаправление на скрипт...";
+                setTimeout(() => {
+                    window.location.replace(PASTE_URL);
+                }, 500);
+            } else {
+                // Все боты и прямые заходы получают только этот текст
+                document.getElementById("status").innerText = BOT_TEXT;
+            }
         }
+
+        // Запуск проверки с минимальной задержкой, чтобы сломать тайминги простых ботов
+        setTimeout(checkAccess, 100);
     </script>
 </body>
 </html>
